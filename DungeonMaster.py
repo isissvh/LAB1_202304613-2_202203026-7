@@ -94,39 +94,13 @@ def to_decimal(numero, base):
                 cont += 1
                 final -= 1
             return result
-
+# no listos
 def to_binary(numero, base):
     return
 def to_hex(numero, base):
     return
 def to_octal(numero, base):
-    final = len(numero) - 1
-    result = 0
-    cont = 0
-    match base:
-        case 2:
-            while final >= 0:
-                result += int(numero[final]) * (2 ** cont)
-                cont += 1
-                final -= 1
-            return result
-        case 8:
-            return int(numero)
-        case 10:
-            resguardo = numero
-            while num > 0:
-                if num % 8 == 0:
-                    
-                else:
-                    num = num // 8
-            return result
-
-        case 16:
-            while final >= 0:
-                result += hex_helper(numero[final]) * (16 ** cont)
-                cont += 1
-                final -= 1
-            return result
+    return
 
 def main():
     print("--- DECODIFICADOR DE NOTAS ---\n")
