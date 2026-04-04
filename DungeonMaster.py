@@ -27,6 +27,7 @@ def lectura():
         data = file.read()
     i = 0
     valores = []
+    print("Esta es la ddata wn: ", data)
     while i < len(data):
         if data[i] in pref:
             prefijo = data[i]
@@ -124,7 +125,7 @@ def to_octal(numero, base):
             resguardo = numero
             while num > 0:
                 if num % 8 == 0:
-                    
+                    print(" estoy aki en el print que hiciste lol")
                 else:
                     num = num // 8
             return result
@@ -159,6 +160,7 @@ def main():
                 salida.append((pref, to_hex(num, aux), num, to_text(pref)))
 
     i = 1
+    print("ESTA ES LA SALIDA: ", salida)
     for pref, num, org, aux in salida:
         print(f"VALOR {i}: {num} (Original: {aux} {pref}{org})")
         i += 1
