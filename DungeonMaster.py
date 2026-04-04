@@ -96,15 +96,7 @@ def to_decimal(numero, base):
             return result
 
 def to_binary(numero, base):
-    match base:
-        case 2:
-            return int(numero)
-        case 8:
-            return bin(int(numero))[2:]
-        case 10:
-            return bin(int(numero))[2:]
-        case 16:
-            return bin(int(numero, 16))[2:]
+    return
 def to_hex(numero, base):
     return
 def to_octal(numero, base):
