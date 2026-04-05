@@ -231,25 +231,30 @@ def main():
     #FUNCIONES
     valores = lectura()
     salida = []
+    mensaje=""
     for pref, num, aux in valores:
-        match base:
-            case 2:
-                salida.append((pref, to_binary(num, aux), num, to_text(pref)))
-            case 8:
-                salida.append((pref, to_octal(num, aux), num, to_text(pref)))
-            case 10:
-                salida.append((pref, to_decimal(num, aux), num, to_text(pref)))
-            case 16:
-                salida.append((pref, to_hex(num, aux), num, to_text(pref)))
+        valido = to_decimal(num,aux)
+        if (valido>=32 and valido<=126):
+            match base:
+                case 2:
+                    salida.append((pref, to_binary(num, aux), num, to_text(pref)))
+                case 8:
+                    salida.append((pref, to_octal(num, aux), num, to_text(pref)))
+                case 10:
+                    salida.append((pref, to_decimal(num, aux), num, to_text(pref)))
+                case 16:
+                    salida.append((pref, to_hex(num, aux), num, to_text(pref)))
 
+            mensaje += chr(valido)
+            
     i = 1
     #filtrar salida
     for pref, num, org, aux in salida:
         print(f"VALOR {i}: {num} (Original: {aux} {pref}{org})")
         i += 1
     print("-------------------------------------------------\n")
-    print("MENSAJE DECODIFICADO:")
-    # MENSAJE
+    print("MENSAJE DECODIFICADO:\n")
+    print(mensaje)
     print("\n[Proceso finalizado con éxito]")
 
 if __name__ == "__main__":
