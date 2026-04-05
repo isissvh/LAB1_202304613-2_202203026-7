@@ -11,6 +11,20 @@ def verificar(c, base):
         return c in "0123456789ABCDEFabcdef"
     return False
 
+oct_bin = {
+    '0': '000', '1': '001', '2': '010', '3': '011',
+    '4': '100', '5': '101', '6': '110', '7': '111'
+}
+bin_oct = {v: k for k, v in oct_bin.items()}
+
+bin_hex = {
+    '0000': '0', '0001': '1', '0010': '2', '0011': '3',
+    '0100': '4', '0101': '5', '0110': '6', '0111': '7',
+    '1000': '8', '1001': '9', '1010': 'A', '1011': 'B',
+    '1100': 'C', '1101': 'D', '1110': 'E', '1111': 'F'
+}
+hex_bin = {v: k for k, v in bin_hex.items()}
+
 def to_text(pref):
     match pref:
         case "*":
@@ -42,7 +56,7 @@ def lectura():
             i += 1
             numero = ""
             while i < len(data) and verificar(data[i], base):
-                numero += data[i]
+                numero += data[i].upper()
                 i += 1
             if numero != "":
                 valores.append((prefijo, numero, base))
@@ -50,8 +64,10 @@ def lectura():
             i += 1
     return valores
 
-def hex_helper(c):
-    match c:
+# forma de la lista Ej: [("*", "1010", 2), ("&", "17", 8), ("#", "255", 10), ("!", "1A3F", 16)]
+
+def hex_helper(n):
+    match n:
         case 'A' | 'a':
             return 10
         case 'B' | 'b':
@@ -65,7 +81,7 @@ def hex_helper(c):
         case 'F' | 'f':
             return 15
         case _:
-            return int(c)
+            return int(n)
 
 def reverse_hex_helper(n):
     if n < 10:
@@ -85,10 +101,7 @@ def reverse_hex_helper(n):
         case 15:
             return "F"
         
-# forma de la lista [("*", "1010", 2), ("&", "17", 8), ("#", "255", 10), ("!", "1A3F", 16)]
-
 def to_decimal(numero, base):
-    print("\nNumero: ", numero, "\n")
     final = len(numero) - 1
     result = 0
     cont = 0
@@ -113,16 +126,16 @@ def to_decimal(numero, base):
                 cont += 1
                 final -= 1
             return result
-# no listos
+
 def to_binary(numero, base):
     result=""
     match base:
         case 2:
             return numero
         case 8:
-            result = to_binary(str(to_decimal(numero,base)),10)
-            print(result)
-            return result
+            for num in numero:
+                result += oct_bin[num]
+            return result.lstrip('0') or '0'
         case 10:
             while int(numero)//2 >= 1:
                 resto=int(numero)%2
@@ -135,56 +148,80 @@ def to_binary(numero, base):
             result = result + str(resto)
             return result[::-1]
         case 16:
-            result = to_binary(str(to_decimal(numero,base)),10)[::-1]
-            if (len(result)%4 != 0):
-                faltantes=4-(len(result)%4)
-                while (faltantes>0):
-                    result+="0"
-                    faltantes-=1
-            return result[::-1]
+            for num in numero:
+                result += hex_bin[num]
+            return result.lstrip('0') or '0'
         
 def to_hex(numero, base):
-    if base != 10:
-        dec = to_decimal(numero, base)
-    else:
-        dec = int(numero)
-
-    if dec == 0:
-        return "0"
-    
     result=""
-    while dec > 0:
-        resto = dec % 16
-        char = reverse_hex_helper(resto)
-        result = char + result
-        dec = dec // 16
-
-    return result
+    match base:
+        case 16:
+            return numero
+        case 10:
+            dec = int(numero)
+            if dec == 0:
+                return "0"
+            while dec > 0:
+                resto = dec % 16
+                char = reverse_hex_helper(resto)
+                result = char + result
+                dec = dec // 16
+            return result
+        case 8:
+            complete = ""
+            for num in numero:
+                complete += oct_bin[num]
+            if len(complete) % 4 != 0:
+                complete = ("0" * (4 - len(complete) % 4)) + complete
+            for i in range(0, len(complete), 4):
+                segment = complete[i:i+4]
+                result += bin_hex[segment]
+            return result.lstrip('0') or '0'
+        case 2:
+            complete = numero
+            if len(complete) % 4 != 0:
+                complete = ("0" * (4 - len(complete) % 4)) + complete
+            for i in range(0, len(complete), 4):
+                segment = complete[i:i+4]
+                result += bin_hex[segment]
+            return result.lstrip('0') or '0'    
 
 def to_octal(numero, base):
-
-    if base != 10:
-        dec = to_decimal(numero, base)
-    else:
-        dec = int(numero)
-        
-    if dec == 0:
-        return "0"
-
-    result = ""
-    while dec > 0:
-        resto = dec % 8
-        result = str(resto) + result
-        dec = dec // 8
-        
-    return result
+    result=""
+    match base:
+        case 16:
+            complete = ""
+            for num in numero:
+                complete += hex_bin[num]
+            if len(complete) % 3 != 0:
+                complete = ("0" * (3 - len(complete) % 3)) + complete
+            for i in range(0, len(complete), 3):
+                segment = complete[i:i+3]
+                result += bin_oct[segment]
+            return result.lstrip('0') or '0'
+        case 10:
+            dec = int(numero)
+            if dec == 0:
+                return "0"
+            while dec > 0:
+                resto = dec % 8
+                result = str(resto) + result
+                dec = dec // 8
+            return result
+        case 8:
+            return numero
+        case 2:
+            complete = numero
+            if len(complete) % 3 != 0:
+                complete = ("0" * (3 - len(complete) % 3)) + complete
+            for i in range(0, len(complete), 3):
+                segment = complete[i:i+3]
+                result += bin_oct[segment]
+            return result.lstrip('0') or '0'
 
 def main():
     print("--- DECODIFICADOR DE NOTAS ---\n")
-    # n=input("TO BINARY\n Manda un NUMERO para transformarlo a OCTAL: ")
-    # base=input("Ingresa la base papu: ")
-    # print(to_octal(n,int(base)))
-    
+
     base = int(input("Ingrese la base en la que desea visualizar los datos (2, 8, 10, 16): "))
     if(base not in [2, 8, 10, 16]):
         return
@@ -193,7 +230,6 @@ def main():
     print("-------------------------------------------------")
     #FUNCIONES
     valores = lectura()
-    print(" \n\nEstos son los valores: ", valores)
     salida = []
     for pref, num, aux in valores:
         match base:
@@ -207,6 +243,7 @@ def main():
                 salida.append((pref, to_hex(num, aux), num, to_text(pref)))
 
     i = 1
+    #filtrar salida
     for pref, num, org, aux in salida:
         print(f"VALOR {i}: {num} (Original: {aux} {pref}{org})")
         i += 1
@@ -215,4 +252,5 @@ def main():
     # MENSAJE
     print("\n[Proceso finalizado con éxito]")
 
-main()
+if __name__ == "__main__":
+    main()
