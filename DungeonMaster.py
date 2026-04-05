@@ -27,7 +27,6 @@ def lectura():
         data = file.read()
     i = 0
     valores = []
-    print("Esta es la ddata wn: ", data)
     while i < len(data):
         if data[i] in pref:
             prefijo = data[i]
@@ -68,9 +67,28 @@ def hex_helper(c):
         case _:
             return int(c)
 
+def reverse_hex_helper(n):
+    if n < 10:
+        return str(n)
+
+    match n:
+        case 10:
+            return "A"
+        case 11:
+            return "B"
+        case 12:
+            return "C"
+        case 13:
+            return "D"
+        case 14:
+            return "E"
+        case 15:
+            return "F"
+        
 # forma de la lista [("*", "1010", 2), ("&", "17", 8), ("#", "255", 10), ("!", "1A3F", 16)]
 
 def to_decimal(numero, base):
+    print("\nNumero: ", numero, "\n")
     final = len(numero) - 1
     result = 0
     cont = 0
@@ -95,50 +113,78 @@ def to_decimal(numero, base):
                 cont += 1
                 final -= 1
             return result
-
+# no listos
 def to_binary(numero, base):
+    result=""
     match base:
         case 2:
-            return int(numero)
+            return numero
         case 8:
-            return bin(int(numero))[2:]
+            result = to_binary(str(to_decimal(numero,base)),10)
+            print(result)
+            return result
         case 10:
-            return bin(int(numero))[2:]
+            while int(numero)//2 >= 1:
+                resto=int(numero)%2
+                if resto == 1:
+                    result = result + "1"
+                elif resto == 0:
+                    result = result + "0"
+                numero = int(numero)//2
+            resto = int(numero)%2
+            result = result + str(resto)
+            return result[::-1]
         case 16:
-            return bin(int(numero, 16))[2:]
+            result = to_binary(str(to_decimal(numero,base)),10)[::-1]
+            if (len(result)%4 != 0):
+                faltantes=4-(len(result)%4)
+                while (faltantes>0):
+                    result+="0"
+                    faltantes-=1
+            return result[::-1]
+        
 def to_hex(numero, base):
-    return
-def to_octal(numero, base):
-    final = len(numero) - 1
-    result = 0
-    cont = 0
-    match base:
-        case 2:
-            while final >= 0:
-                result += int(numero[final]) * (2 ** cont)
-                cont += 1
-                final -= 1
-            return result
-        case 8:
-            return int(numero)
-        case 10:
-            resguardo = numero
-            while num > 0:
-                if num % 8 == 0:
-                    print(" estoy aki en el print que hiciste lol")
-                else:
-                    num = num // 8
-            return result
+    if base != 10:
+        dec = to_decimal(numero, base)
+    else:
+        dec = int(numero)
 
-        case 16:
-            while final >= 0:
-                result += hex_helper(numero[final]) * (16 ** cont)
-                cont += 1
-                final -= 1
-            return result
+    if dec == 0:
+        return "0"
+    
+    result=""
+    while dec > 0:
+        resto = dec % 16
+        char = reverse_hex_helper(resto)
+        result = char + result
+        dec = dec // 16
+
+    return result
+
+def to_octal(numero, base):
+
+    if base != 10:
+        dec = to_decimal(numero, base)
+    else:
+        dec = int(numero)
+        
+    if dec == 0:
+        return "0"
+
+    result = ""
+    while dec > 0:
+        resto = dec % 8
+        result = str(resto) + result
+        dec = dec // 8
+        
+    return result
 
 def main():
     print("--- DECODIFICADOR DE NOTAS ---\n")
+    # n=input("TO BINARY\n Manda un NUMERO para transformarlo a OCTAL: ")
+    # base=input("Ingresa la base papu: ")
+    # print(to_octal(n,int(base)))
+    
     base = int(input("Ingrese la base en la que desea visualizar los datos (2, 8, 10, 16): "))
     if(base not in [2, 8, 10, 16]):
         return
@@ -147,6 +193,7 @@ def main():
     print("-------------------------------------------------")
     #FUNCIONES
     valores = lectura()
+    print(" \n\nEstos son los valores: ", valores)
     salida = []
     for pref, num, aux in valores:
         match base:
@@ -160,7 +207,6 @@ def main():
                 salida.append((pref, to_hex(num, aux), num, to_text(pref)))
 
     i = 1
-    print("ESTA ES LA SALIDA: ", salida)
     for pref, num, org, aux in salida:
         print(f"VALOR {i}: {num} (Original: {aux} {pref}{org})")
         i += 1
