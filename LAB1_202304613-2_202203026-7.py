@@ -1,5 +1,6 @@
 pref = ["*", "&", "#", "!"]
 
+# Verifica si un carácter es válido en la base dada
 def verificar(c, base):
     if base == 2:
         return c in "01"
@@ -25,6 +26,7 @@ bin_hex = {
 }
 hex_bin = {v: k for k, v in bin_hex.items()}
 
+# Convierte el prefijo a su representación textual
 def to_text(pref):
     match pref:
         case "*":
@@ -35,7 +37,8 @@ def to_text(pref):
             return "Decimal"
         case "!":
             return "Hexadecimal"
-
+        
+# Lee el archivo y extrae valores con prefijos
 def lectura():
     with open("notas_dm.txt", "r") as file:
         data = file.read()
@@ -66,6 +69,7 @@ def lectura():
 
 # forma de la lista Ej: [("*", "1010", 2), ("&", "17", 8), ("#", "255", 10), ("!", "1A3F", 16)]
 
+# Convierte un dígito hexadecimal a su valor decimal
 def hex_helper(n):
     match n:
         case 'A' | 'a':
@@ -83,6 +87,7 @@ def hex_helper(n):
         case _:
             return int(n)
 
+# Convierte un valor decimal a su dígito hexadecimal
 def reverse_hex_helper(n):
     if n < 10:
         return str(n)
@@ -100,7 +105,8 @@ def reverse_hex_helper(n):
             return "E"
         case 15:
             return "F"
-        
+
+# Convierte un número de la base dada a decimal
 def to_decimal(numero, base):
     final = len(numero) - 1
     result = 0
@@ -127,6 +133,7 @@ def to_decimal(numero, base):
                 final -= 1
             return result
 
+# Convierte un número de la base dada a binario
 def to_binary(numero, base):
     result=""
     match base:
@@ -152,6 +159,7 @@ def to_binary(numero, base):
                 result += hex_bin[num]
             return result.lstrip('0') or '0'
         
+# Convierte un número de la base dada a hexadecimal
 def to_hex(numero, base):
     result=""
     match base:
@@ -184,8 +192,9 @@ def to_hex(numero, base):
             for i in range(0, len(complete), 4):
                 segment = complete[i:i+4]
                 result += bin_hex[segment]
-            return result.lstrip('0') or '0'    
+            return result.lstrip('0') or '0'
 
+# Convierte un número de la base dada a octal
 def to_octal(numero, base):
     result=""
     match base:
@@ -220,6 +229,7 @@ def to_octal(numero, base):
             return result.lstrip('0') or '0'
 
 def main():
+    # Función principal que ejecuta
     print("--- DECODIFICADOR DE NOTAS ---\n")
 
     base = int(input("Ingrese la base en la que desea visualizar los datos (2, 8, 10, 16): "))
@@ -248,7 +258,6 @@ def main():
             mensaje += chr(valido)
             
     i = 1
-    #filtrar salida
     for pref, num, org, aux in salida:
         print(f"VALOR {i}: {num} (Original: {aux} {pref}{org})")
         i += 1
